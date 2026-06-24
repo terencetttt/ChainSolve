@@ -16,6 +16,16 @@ This isn't one AI giving you an answer. It's multiple independent validators agr
 
 ---
 
+## Screenshots
+
+![Submit Page](screenshots/submit.png)
+*Submit any problem — title, category, severity, description — and track AI consensus live*
+
+![Archive](screenshots/archive.png)
+*Solution archive showing solved problems with category, severity, difficulty badges and upvote counts*
+
+---
+
 ## How It Works
 
 ```
