@@ -3,13 +3,13 @@
 
     <div class="archive-header">
       <div>
-        <p class="section-label">Solution Archive</p>
-        <h1 class="archive-title">Every Problem. Every Solution.</h1>
+        <p class="archive-eyebrow">Solution archive</p>
+        <h1 class="archive-title">Every problem. Every solution.</h1>
         <p class="archive-sub">
           {{ problems.length }} problem{{ problems.length !== 1 ? 's' : '' }} solved on Bradbury chain.
         </p>
       </div>
-      <RouterLink to="/" class="btn-primary">+ Submit Problem</RouterLink>
+      <RouterLink to="/" class="btn-primary">Submit a problem</RouterLink>
     </div>
 
     <!-- FILTERS -->
@@ -30,14 +30,14 @@
           class="filter-chip"
           :class="{ 'filter-chip--active': activeSeverity === sev }"
           @click="activeSeverity = activeSeverity === sev ? '' : sev"
-        >{{ sev === '' ? 'Any Severity' : sev }}</button>
+        >{{ sev === '' ? 'Any severity' : sev }}</button>
       </div>
       <div class="filter-group">
         <button
           class="filter-chip"
           :class="{ 'filter-chip--active': activeStatus === 'SOLVED' }"
           @click="activeStatus = activeStatus === 'SOLVED' ? '' : 'SOLVED'"
-        >✓ Solved Only</button>
+        >Solved only</button>
       </div>
     </div>
 
@@ -49,13 +49,11 @@
 
     <!-- EMPTY -->
     <div v-else-if="!isConnected" class="empty-state">
-      <p class="empty-icon">⬡</p>
       <p>Connect your wallet to browse the archive.</p>
-      <button class="btn-primary" @click="connect">Connect Wallet</button>
+      <button class="btn-primary" @click="connect">Connect wallet</button>
     </div>
 
     <div v-else-if="filtered.length === 0" class="empty-state">
-      <p class="empty-icon">🔍</p>
       <p>No problems match your filters.</p>
     </div>
 
@@ -140,7 +138,7 @@ const shortAddr = (addr: string) =>
 </script>
 
 <style scoped>
-.archive-page { display: flex; flex-direction: column; gap: 32px; }
+.archive-page { display: flex; flex-direction: column; gap: 34px; }
 
 .archive-header {
   display: flex;
@@ -148,73 +146,84 @@ const shortAddr = (addr: string) =>
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--rule);
+}
+.archive-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--forest);
+  margin-bottom: 10px;
 }
 .archive-title {
   font-family: var(--font-display);
   font-size: 32px;
   font-weight: 700;
-  color: var(--bright);
-  margin: 8px 0 6px;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.2;
 }
-.archive-sub { color: var(--muted); font-size: 14px; }
+.archive-sub { color: var(--soft); font-size: 14px; }
 
 /* ── Filters ── */
 .filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
 }
 .filter-group {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  padding-right: 12px;
-  border-right: 1px solid var(--border);
+  padding-right: 14px;
+  border-right: 1px solid var(--rule);
 }
 .filter-group:last-child { border-right: none; }
 
 .filter-chip {
-  padding: 5px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 500;
+  padding: 6px 13px;
+  border: 1px solid var(--rule-dark);
+  background: var(--card);
+  color: var(--soft);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.15s;
 }
-.filter-chip:hover { color: var(--text); border-color: var(--muted); }
+.filter-chip:hover { color: var(--ink); border-color: var(--ink); }
 .filter-chip--active {
-  background: var(--accent-dim);
-  border-color: var(--accent);
-  color: var(--accent);
+  background: var(--forest);
+  border-color: var(--forest);
+  color: #fff;
 }
 
 /* ── States ── */
 .empty-state {
   text-align: center;
-  padding: 80px 24px;
+  padding: 88px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  color: var(--muted);
+  gap: 18px;
+  color: var(--soft);
 }
-.empty-icon { font-size: 48px; }
 
 .spinner {
-  width: 36px;
-  height: 36px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--forest);
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Problem Grid ── */
+/* ── Grid ── */
 .problems-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -224,15 +233,15 @@ const shortAddr = (addr: string) =>
 .problem-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   cursor: pointer;
-  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+  padding: 26px;
+  transition: border-color 0.2s, box-shadow 0.2s;
   text-decoration: none;
 }
 .problem-card:hover {
-  border-color: var(--border-h);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(34,211,238,0.06);
+  border-color: var(--forest);
+  box-shadow: 0 2px 14px rgba(22, 24, 29, 0.06);
 }
 
 .pc-top {
@@ -245,16 +254,16 @@ const shortAddr = (addr: string) =>
 
 .pc-title {
   font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--bright);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
   line-height: 1.35;
 }
 
 .pc-summary {
   font-size: 13px;
-  color: var(--muted);
-  line-height: 1.6;
+  color: var(--soft);
+  line-height: 1.65;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -266,10 +275,10 @@ const shortAddr = (addr: string) =>
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
 }
-.pc-meta { display: flex; align-items: center; gap: 10px; }
-.upvote-count { font-size: 12px; color: var(--muted); font-weight: 500; }
-.pc-addr { font-size: 11px; color: var(--muted); }
+.pc-meta { display: flex; align-items: center; gap: 12px; }
+.upvote-count { font-size: 12px; color: var(--soft); font-weight: 500; }
+.pc-addr { font-size: 11px; color: var(--faint); }
 </style>

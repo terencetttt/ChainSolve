@@ -9,9 +9,8 @@
 
     <!-- NOT FOUND -->
     <div v-else-if="!problem" class="empty-state">
-      <p class="empty-icon">⬡</p>
       <p>Problem not found on chain.</p>
-      <RouterLink to="/archive" class="btn-ghost">← Back to Archive</RouterLink>
+      <RouterLink to="/archive" class="btn-ghost">← Back to archive</RouterLink>
     </div>
 
     <template v-else>
@@ -20,16 +19,16 @@
       <div class="breadcrumb">
         <RouterLink to="/archive" class="breadcrumb-link">Archive</RouterLink>
         <span class="breadcrumb-sep">/</span>
-        <span>Problem #{{ problem.id }}</span>
+        <span class="mono">Case No. {{ String(problem.id).padStart(3, '0') }}</span>
       </div>
 
-      <!-- TITLE SECTION -->
-      <div class="title-section">
+      <!-- REPORT HEAD -->
+      <div class="report-head card">
         <div class="title-badges">
           <span class="badge" :class="`badge-${problem.category.toLowerCase()}`">{{ problem.category }}</span>
           <span class="badge" :class="`badge-${problem.severity.toLowerCase()}`">{{ problem.severity }}</span>
           <span class="badge" :class="`badge-${problem.difficulty.toLowerCase()}`">{{ problem.difficulty }}</span>
-          <span class="badge" :class="`badge-${problem.confidence.toLowerCase()}`">{{ problem.confidence }} CONFIDENCE</span>
+          <span class="badge" :class="`badge-${problem.confidence.toLowerCase()}`">{{ problem.confidence }} confidence</span>
           <span class="badge" :class="`badge-${problem.status.toLowerCase()}`">{{ problem.status }}</span>
         </div>
         <h1 class="detail-title">{{ problem.title }}</h1>
@@ -40,18 +39,16 @@
 
       <!-- ACTION BAR -->
       <div class="action-bar card">
-        <!-- Upvote -->
         <button
           class="btn-ghost action-btn"
           :disabled="actionLoading === 'upvote'"
           @click="upvote"
         >
           <span>▲</span>
-          <span>{{ problem.upvote_count }} Upvote{{ problem.upvote_count !== 1 ? 's' : '' }}</span>
+          <span>{{ problem.upvote_count }} upvote{{ problem.upvote_count !== 1 ? 's' : '' }}</span>
           <span v-if="actionLoading === 'upvote'" class="spinner-sm" />
         </button>
 
-        <!-- Mark Solved (submitter only) -->
         <button
           v-if="isSubmitter && problem.status === 'OPEN'"
           class="btn-ghost action-btn"
@@ -59,72 +56,71 @@
           @click="markSolved"
         >
           <span>✓</span>
-          <span>Mark as Solved</span>
+          <span>Mark as solved</span>
           <span v-if="actionLoading === 'solved'" class="spinner-sm" />
         </button>
 
         <div class="action-spacer" />
-        <span class="action-id mono">#{{ problem.id }}</span>
+        <span class="action-id mono">No. {{ String(problem.id).padStart(3, '0') }}</span>
       </div>
 
-      <!-- SOLUTION SECTIONS -->
-      <div class="card">
-        <p class="section-label">The Problem</p>
-        <p class="detail-desc">{{ problem.description }}</p>
+      <!-- REPORT SECTIONS -->
+      <div class="card report-section">
+        <p class="section-label"><span class="section-num">§</span> The problem as submitted</p>
+        <p class="body-text soft pre-wrap">{{ problem.description }}</p>
       </div>
 
-      <div class="card highlight-card">
-        <p class="section-label">AI Summary</p>
-        <p class="detail-summary">{{ problem.problem_summary }}</p>
+      <div class="card report-section">
+        <p class="section-label"><span class="section-num">01</span> Executive summary</p>
+        <p class="body-text">{{ problem.problem_summary }}</p>
       </div>
 
-      <div class="two-col">
-        <div class="card">
-          <p class="section-label">Root Cause</p>
-          <p class="body-text">{{ problem.root_cause }}</p>
-        </div>
-        <div class="card">
-          <p class="section-label">Risks</p>
-          <p class="body-text">{{ problem.risks }}</p>
-        </div>
+      <div class="card report-section">
+        <p class="section-label"><span class="section-num">02</span> Root cause analysis</p>
+        <p class="body-text">{{ problem.root_cause }}</p>
       </div>
 
-      <div class="card">
-        <p class="section-label">Primary Solution</p>
-        <p class="body-text solution-text">{{ problem.primary_solution }}</p>
+      <div class="card report-section">
+        <p class="section-label"><span class="section-num">03</span> Recommended course of action</p>
+        <p class="body-text pre-wrap">{{ problem.primary_solution }}</p>
       </div>
 
-      <div class="card">
-        <p class="section-label">Alternative Approaches</p>
+      <div class="card report-section">
+        <p class="section-label"><span class="section-num">04</span> Alternative approaches</p>
         <div class="alternatives">
           <div v-for="(alt, i) in alternatives" :key="i" class="alt-item">
-            <span class="alt-num">{{ i + 1 }}</span>
+            <span class="alt-marker mono">{{ String(i + 1).padStart(2, '0') }}</span>
             <span class="body-text">{{ alt }}</span>
           </div>
         </div>
       </div>
 
+      <div class="card report-section">
+        <p class="section-label"><span class="section-num">05</span> Risk assessment</p>
+        <p class="body-text">{{ problem.risks }}</p>
+      </div>
+
       <!-- RE-ANALYSIS HISTORY -->
       <div v-if="reanalysisList.length > 0" class="reanalysis-history">
-        <p class="section-label">Re-Analysis History</p>
+        <p class="history-heading">Re-analysis history</p>
         <div
           v-for="r in reanalysisList"
           :key="r.reanalysis_num"
           class="card reanalysis-card"
         >
           <div class="reanalysis-meta">
-            <span class="badge badge-research">RE-ANALYSIS #{{ r.reanalysis_num + 1 }}</span>
+            <span class="badge badge-research">Re-analysis {{ String(r.reanalysis_num + 1).padStart(2, '0') }}</span>
             <div class="reanalysis-badges">
               <span class="badge" :class="`badge-${r.difficulty.toLowerCase()}`">{{ r.difficulty }}</span>
               <span class="badge" :class="`badge-${r.confidence.toLowerCase()}`">{{ r.confidence }}</span>
             </div>
           </div>
           <div class="reanalysis-context">
-            <p class="section-label" style="font-size:10px">New Context Added</p>
+            <p class="context-label">New context added</p>
             <p class="body-text context-text">{{ r.context_added }}</p>
           </div>
           <div>
-            <p class="section-label" style="font-size:10px">Updated Solution</p>
+            <p class="context-label">Updated recommendation</p>
             <p class="body-text">{{ r.primary_solution }}</p>
           </div>
         </div>
@@ -132,9 +128,9 @@
 
       <!-- RE-ANALYZE FORM -->
       <div class="card reanalyze-form">
-        <p class="section-label">Request Re-Analysis</p>
+        <p class="section-label"><span class="section-num">+</span> Request re-analysis</p>
         <p class="reanalyze-hint">
-          Have new information? Add context and AI validators will produce an updated solution.
+          Have new information? Add context and the validators will produce an updated recommendation.
         </p>
         <textarea
           v-model="newContext"
@@ -149,8 +145,8 @@
             :disabled="!newContext.trim() || actionLoading === 'reanalyze'"
             @click="reanalyze"
           >
-            <span v-if="actionLoading === 'reanalyze'">Running Re-Analysis…</span>
-            <span v-else>⬡ Re-Analyze</span>
+            <span v-if="actionLoading === 'reanalyze'">Running re-analysis…</span>
+            <span v-else>Re-analyze</span>
           </button>
         </div>
         <p v-if="reanalyzeHash" class="tx-note mono">
@@ -196,7 +192,6 @@ async function loadProblem() {
     const data = await readContract('get_problem', [problemId.value]) as any
     problem.value = data
 
-    // Load all re-analyses
     const count = await readContract('get_reanalysis_count', [problemId.value]) as number
     const list = []
     for (let i = 0; i < count; i++) {
@@ -268,129 +263,154 @@ onMounted(loadProblem)
 
 <style scoped>
 .detail-page {
-  max-width: 820px;
+  max-width: 780px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
 }
 
 /* ── States ── */
 .empty-state {
   text-align: center;
-  padding: 80px 0;
+  padding: 88px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  color: var(--muted);
+  gap: 18px;
+  color: var(--soft);
 }
-.empty-icon { font-size: 48px; }
 .spinner {
-  width: 32px; height: 32px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
+  width: 30px; height: 30px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--forest);
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner-sm {
   display: inline-block;
-  width: 14px; height: 14px;
-  border: 2px solid var(--border);
-  border-top-color: var(--accent);
+  width: 13px; height: 13px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--forest);
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 /* ── Breadcrumb ── */
 .breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--muted);
+  gap: 10px;
+  font-size: 12px;
+  color: var(--faint);
+  padding-bottom: 4px;
 }
-.breadcrumb-link { color: var(--accent); }
+.breadcrumb-link { color: var(--forest); font-weight: 500; }
 .breadcrumb-link:hover { text-decoration: underline; }
-.breadcrumb-sep { opacity: 0.4; }
+.breadcrumb-sep { opacity: 0.5; }
 
-/* ── Title ── */
-.title-section { display: flex; flex-direction: column; gap: 12px; }
+/* ── Report head ── */
+.report-head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 3px solid var(--forest);
+}
 .title-badges { display: flex; flex-wrap: wrap; gap: 8px; }
 .detail-title {
   font-family: var(--font-display);
-  font-size: clamp(24px, 4vw, 36px);
+  font-size: clamp(24px, 4vw, 34px);
   font-weight: 700;
-  color: var(--bright);
-  line-height: 1.2;
+  color: var(--ink);
+  line-height: 1.25;
 }
-.detail-submitter { font-size: 12px; color: var(--muted); }
+.detail-submitter { font-size: 12px; color: var(--faint); }
 
-/* ── Action Bar ── */
+/* ── Action bar ── */
 .action-bar {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 20px;
+  padding: 16px 24px;
   flex-wrap: wrap;
 }
 .action-btn { gap: 8px; }
 .action-spacer { flex: 1; }
-.action-id { font-size: 11px; color: var(--muted); }
+.action-id { font-size: 11px; color: var(--faint); }
 
-/* ── Content ── */
-.highlight-card {
-  background: linear-gradient(135deg, rgba(34,211,238,0.06), rgba(167,139,250,0.04));
-  border-color: rgba(34,211,238,0.2);
-}
-.detail-desc  { font-size: 14px; color: var(--muted); line-height: 1.8; white-space: pre-wrap; }
-.detail-summary { font-size: 15px; color: var(--text); line-height: 1.75; }
-.body-text    { font-size: 14px; line-height: 1.8; color: var(--text); }
-.solution-text { white-space: pre-wrap; }
+/* ── Report sections ── */
+.report-section { padding: 26px 32px; }
+.body-text { font-size: 14.5px; line-height: 1.75; color: var(--ink); }
+.body-text.soft { color: var(--soft); }
+.pre-wrap { white-space: pre-wrap; }
 
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-/* ── Alternatives ── */
-.alternatives { display: flex; flex-direction: column; gap: 12px; }
-.alt-item { display: flex; gap: 14px; align-items: flex-start; }
-.alt-num {
+.alternatives { display: flex; flex-direction: column; gap: 14px; }
+.alt-item { display: flex; gap: 16px; align-items: baseline; }
+.alt-marker {
   flex-shrink: 0;
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: var(--accent-dim);
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; color: var(--accent);
+  font-size: 12px;
+  color: var(--forest);
+  font-weight: 500;
 }
 
-/* ── Re-analysis history ── */
+/* ── Re-analysis ── */
 .reanalysis-history { display: flex; flex-direction: column; gap: 12px; }
-.reanalysis-card { display: flex; flex-direction: column; gap: 16px; }
-.reanalysis-meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.history-heading {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  padding: 12px 0 4px;
+}
+.reanalysis-card { display: flex; flex-direction: column; gap: 18px; }
+.reanalysis-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
 .reanalysis-badges { display: flex; gap: 6px; }
-.reanalysis-context { padding: 12px; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); border: 1px solid var(--border); }
-.context-text { font-style: italic; color: var(--muted); font-size: 13px; }
+.reanalysis-context {
+  padding: 16px 18px;
+  background: var(--paper);
+  border-left: 2px solid var(--rule-dark);
+}
+.context-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 8px;
+}
+.context-text { font-style: italic; color: var(--soft); font-size: 13.5px; }
 
 /* ── Re-analyze form ── */
 .reanalyze-form { display: flex; flex-direction: column; gap: 16px; }
-.reanalyze-hint { font-size: 13px; color: var(--muted); }
+.reanalyze-hint { font-size: 13px; color: var(--soft); }
 
 .field-input {
-  background: rgba(2, 8, 23, 0.6);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 11px 14px;
-  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--rule-dark);
+  padding: 12px 14px;
+  color: var(--ink);
   font-family: var(--font-body);
   font-size: 14px;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
   width: 100%;
+  border-radius: 0;
 }
-.field-input:focus { border-color: var(--accent); }
-.field-input::placeholder { color: var(--muted); opacity: 0.6; }
-.field-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+.field-input:focus {
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px var(--forest-wash);
+}
+.field-input::placeholder { color: var(--faint); }
+.field-textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 
 .reanalyze-footer {
   display: flex;
@@ -399,12 +419,12 @@ onMounted(loadProblem)
   gap: 12px;
   flex-wrap: wrap;
 }
-.form-note { font-size: 12px; color: var(--muted); }
-.tx-note { font-size: 11px; color: var(--muted); }
-.error-msg { font-size: 13px; color: var(--danger); }
+.form-note { font-size: 12px; color: var(--faint); }
+.tx-note { font-size: 11px; color: var(--faint); }
+.error-msg { font-size: 13px; color: var(--red); }
 
 @media (max-width: 600px) {
-  .two-col { grid-template-columns: 1fr; }
   .reanalyze-footer { flex-direction: column; align-items: stretch; }
+  .report-section { padding: 22px 20px; }
 }
 </style>
