@@ -1,0 +1,8 @@
+EquiVerdict client evidence
+
+Client: Party A
+Case: case-f4f4dcdb-c59c-4b52-8fb5-57bd37ddbee1
+
+The original agreement required a responsive 5-page website to be delivered by 15 September 2026 for 500 USDC.
+
+The client states that the delivered website did not fully match the agreed scope and deliverables.
